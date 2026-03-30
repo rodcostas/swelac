@@ -781,12 +781,18 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 let lang = 'en';
+// Build translation map at load time — immune to DOM mutation
+const _translations = new Map();
+document.querySelectorAll('[data-en]').forEach(el => {
+  _translations.set(el, { en: el.getAttribute('data-en'), es: el.getAttribute('data-es') });
+});
+
 function setLang(l) {
   lang = l;
   document.getElementById('langEN').classList.toggle('active', l==='en');
   document.getElementById('langES').classList.toggle('active', l==='es');
-  document.querySelectorAll('[data-en]').forEach(el => {
-    const t = el.getAttribute('data-'+l);
+  _translations.forEach((v, el) => {
+    const t = v[l];
     if (!t) return;
     if (el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.placeholder = t;
     else if (el.tagName==='OPTION') el.textContent = t;
